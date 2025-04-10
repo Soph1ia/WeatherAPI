@@ -22,3 +22,27 @@ You should be able to see this if you have everything set up correctly.
 From the main folder run the following code in the terminal
 
 `python -m pytest`
+
+# Planning
+
+## Basic Commitment 
+- Fast API
+- Users can query sensor, statistic, date range, max/min
+- Application returns this statistic.
+- Store sensor data in a persisted database.
+
+### Testing 
+- Pytesting methods
+- Test database
+- input validation
+
+## Stretch Goal 
+- Use a hugging face model link the methods to the LLM
+- Allowing users to state a sentence and retrieve results through an LLM
+- Polling to get the latest data into the database
+
+# Thoughts on Improving the Solution 
+- CI/CD pipeline
+- performance testing
+- cloud deployment potentially
+- Caching?
