@@ -2,12 +2,11 @@ import sqlite3
 import random
 from datetime import datetime, timedelta
 from util import parser
-import schedule
 import time
 import requests
 import sqlite3
 from datetime import datetime
-import weather_data_api
+from database import weather_data_api
 import logging
 
 logger = logging.getLogger(__name__)
@@ -121,7 +120,7 @@ def update_database():
         cursor.execute('''
             INSERT INTO sensor_data (sensorid, temp, humidity, wind_speed, date)
             VALUES (?, ?, ?, ?, ?)
-        ''', (latest_data['sensor_id'], latest_data['temperature'], latest_data['humidity'], latest_data['wind_speed'], latest_data['timestamp']))
+        ''', (latest_data['sensor_id'], latest_data['temperature'], latest_data['humidity'], latest_data['wind_speed'], latest_data['date']))
         # Commit changes and close the connection
         conn.commit()
         conn.close()

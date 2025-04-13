@@ -12,8 +12,8 @@ def test_get_sensor_data_success():
     # Mock inputs
     sensor_id = 1
     date = "2023-01-01"
-    mock_rows_db = [{"id": 1, "value": 25.5, "timestamp": "2023-01-01T12:00:00"}]
-    mock_parsed_data = {"sensor_id": 1, "data": [{"value": 25.5, "timestamp": "2023-01-01T12:00:00"}]}
+    mock_rows_db = [{"id": 1, "value": 25.5, "date": "03-04-2025"}]
+    mock_parsed_data = {"sensor_id": 1, "data": [{"value": 25.5, "date": "03-04-2025"}]}
 
     # Mock dependencies
     with patch("router.database_router.sensor_db_api.query_database", return_value=mock_rows_db) as mock_query_db, \
@@ -30,7 +30,7 @@ def test_get_sensor_data_success():
 def test_get_sensor_data_failure():
     # Mock inputs
     sensor_id = 1
-    date = "2023-01-01"
+    date = "08-04-2025"
 
     # Mock dependencies
     with patch("router.database_router.sensor_db_api.query_database", side_effect=Exception("Database error")):
