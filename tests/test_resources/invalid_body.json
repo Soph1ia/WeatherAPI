@@ -1,0 +1,6 @@
+{
+    "statistic": "invalid_statistic",
+    "date": "invalid_date",
+    "metrics": "invalid_metric",
+    "sensors": ["invalid_sensor"]
+}

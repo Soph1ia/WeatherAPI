@@ -1,0 +1,6 @@
+{
+    "statistic": "average",
+    "date": "29-04-2025",
+    "metrics": "temperature",
+    "sensors": ["sensor1", "sensor2"]
+}

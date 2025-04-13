@@ -87,3 +87,10 @@ def query_database(sensor_id, date):
     conn.close()
 
     return rows
+
+
+def update_db_with_new_entries():
+    """
+    TODO: This method updates the database with new entries.
+    It polls the API for new entries and updates the database.
+    """

@@ -1,0 +1,8 @@
+{
+    "statistic": "average",
+    "sensors": ["sensor1", "sensor2"],
+    "date": "29-04-2025",
+    "metrics": "temperature",
+    "result": "25.5",
+    "status": "success"
+}
