@@ -2,6 +2,17 @@ import sqlite3
 import random
 from datetime import datetime, timedelta
 from util import parser
+import schedule
+import time
+import requests
+import sqlite3
+from datetime import datetime
+import weather_data_api
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def init_database():
     """
@@ -89,8 +100,30 @@ def query_database(sensor_id, date):
     return rows
 
 
-def update_db_with_new_entries():
+def update_database():
     """
     TODO: This method updates the database with new entries.
     It polls the API for new entries and updates the database.
     """
+    
+    # Call the weather_data API to get the latest sensor data
+    latest_data = weather_data_api.fetch_latest_data()
+    logger.info(f"Latest data from weather API: {latest_data}")
+    
+    # Call the database API to update the database
+    try: 
+        # Connect to (or create) a local database file
+        conn = sqlite3.connect('sensor_data.db')
+
+        # Create a cursor object to execute SQL commands
+        cursor = conn.cursor()
+        # Add new entried from the weather_data API to the database
+        cursor.execute('''
+            INSERT INTO sensor_data (sensorid, temp, humidity, wind_speed, date)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (latest_data['sensor_id'], latest_data['temperature'], latest_data['humidity'], latest_data['wind_speed'], latest_data['timestamp']))
+        # Commit changes and close the connection
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        raise Exception(f"Error in update_db: {str(e)}")

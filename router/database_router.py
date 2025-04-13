@@ -41,3 +41,17 @@ def get_sensor_data(sensor_id: int, date: str):
         raise HTTPException(
             status_code=500, 
             detail=f"Error in get_sensor_data: {str(e)}")
+
+def update_database():
+    """
+    Update the database with new entries.
+    It polls the API for new entries and updates the database.
+    """
+    # Call the database API to update the database
+    try: 
+        sensor_db_api.update_database()
+        print("Database updated successfully.")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error in update_db: {str(e)}")

@@ -9,6 +9,9 @@ import json
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+def validation(request_body) -> bool:
+        return input_validation.validate_sensor_ids(request_body['sensors']) and input_validation.validate_date(request_body['date'])and input_validation.validate_metrics(request_body['metrics']) and input_validation.validate_statistics(request_body['statistic'])
+
 
 @router.post("/sensor/stats")
 async def get_sensor_statistics(
@@ -45,17 +48,20 @@ async def get_sensor_statistics(
         print("Statistic:", request_body['statistic'])
         
         # Validate inputs using utility functions
-        valid_sensors = input_validation.validate_sensor_ids(request_body['sensors'])
-        valid_date = input_validation.validate_date(request_body['date'])
-        valid_metric = input_validation.validate_metrics(request_body['metrics'])
-        valid_statistic = input_validation.validate_statistics(request_body['statistic'])
+        valid_input = validation(request_body)
         list_of_sensor_data = []    
         
         # Only proceed if all are valid
-        if valid_sensors and valid_date and valid_metric and valid_statistic:
+        if valid_input:
             logger.info("All inputs are valid.")
+
+            try: # For this example we update the database everytime we call the API
+                database_router.update_database()
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500, 
+                    detail=f"Error in update_db: {str(e)}")
             
-            # Call the database to get sensor data
             for sensor in request_body['sensors']:
                 # Call the database API to get the sensor data
                 sensor_data = database_router.get_sensor_data(sensor_id=sensor, date=request_body['date'])
@@ -93,5 +99,3 @@ async def get_sensor_statistics(
         raise HTTPException(
             status_code=500, 
             detail=f"Error in get_sensor_statistics: {str(e)}")
-        
-    return statistics_from_data
