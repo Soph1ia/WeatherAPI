@@ -22,6 +22,8 @@ You should be able to see this if you have everything set up correctly.
 From the main folder run the following code in the terminal
 
 `python -m pytest`
+![image](https://github.com/user-attachments/assets/5e4e479a-9ea1-41e8-99ee-a18a4f0e3384)
+
 
 # Planning
 
