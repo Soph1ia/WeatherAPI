@@ -28,13 +28,18 @@ mock_invalid_body = {
 }
 
 mock_response_body = {
-    "statistic": "average",
-    "sensors": ["sensor1", "sensor2"],
-    "date": "29-04-2025",
-    "metrics": "temperature",
-    "response": "{'sensor1_temperature_average': 25.5, 'sensor2_temperature_average': 30.0}",
-    "msg": "success"
+  "statistic": "sum",
+  "sensors": [
+    "sensor1",
+    "sensor3",
+    "sensor2"
+  ],
+  "date": "03-04-2025",
+  "metrics": "temperature",
+  "response": "{'1_temperature_average': 617.5497472652987, '3_temperature_average': 527.486954821391, '2_temperature_average': 507.7956089107177}",
+  "msg": "success"
 }
+
 
 @patch("util.input_validation.validate_sensor_ids", return_value=True)
 @patch("util.input_validation.validate_date")
