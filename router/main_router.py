@@ -1,11 +1,16 @@
 from fastapi import Body, HTTPException, APIRouter
 from typing import Annotated
 from schemas import request_schema, response_schema
+from util import input_validation, statistics_calculator,parser
+from router import database_router
+import logging
+import json
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
-@router.post("/sensor/stats", response_model=response_schema.StatisticsResponseSchema)
+@router.post("/sensor/stats")
 async def get_sensor_statistics(
     item: Annotated[
         request_schema.StatisticsRequestBody,
@@ -13,14 +18,14 @@ async def get_sensor_statistics(
             examples=[
                 {
                     "statistic": "average",
-                    "date": "1",
-                    "metrics": ["temperature", "humidity"],
+                    "date": "29-04-2025",
+                    "metrics": "temperature",
                     "sensors": ["sensor1", "sensor2"],
                 }
             ],
         ),
     ],
-):
+) -> response_schema.StatisticsResponseSchema:
     """
     This method is used to get the statistics of the sensors.
     It takes the request body as input and returns the statistics response.
@@ -29,23 +34,64 @@ async def get_sensor_statistics(
         item (StatisticsRequestBody): The request body containing the statistics request.
         
     """
-    # Here you would typically process the request and return a response.
-    # For demonstration purposes, we'll just return the input data as the response.
-    try : 
-        variable_to_return = {
-        "statistic": "aver",
-        "sensor": ["sensor1", "sensor2"],
-        "date": "1",
-        "metrics": ["temperature", "humidity"],
-        "response": 1,
-        "msg": "success",
-    }
+    try :         
+        # Access the request body using model_dump (if needed for debugging or processing)
+        request_body = item.model_dump()
+        logger.info(f"Request body: {request_body}")
+        print("Request body:", request_body)
+        print("Sensors:", request_body['sensors'])
+        print("Date:", request_body['date'])
+        print("Metrics:", request_body['metrics'])
+        print("Statistic:", request_body['statistic'])
         
-        # do input validation 
+        # Validate inputs using utility functions
+        valid_sensors = input_validation.validate_sensor_ids(request_body['sensors'])
+        valid_date = input_validation.validate_date(request_body['date'])
+        valid_metric = input_validation.validate_metrics(request_body['metrics'])
+        valid_statistic = input_validation.validate_statistics(request_body['statistic'])
+        list_of_sensor_data = []    
         
-        # call the
+        # Only proceed if all are valid
+        if valid_sensors and valid_date and valid_metric and valid_statistic:
+            logger.info("All inputs are valid.")
+            
+            # Call the database to get sensor data
+            for sensor in request_body['sensors']:
+                # Call the database API to get the sensor data
+                sensor_data = database_router.get_sensor_data(sensor_id=sensor, date=request_body['date'])
+                list_of_sensor_data.append(sensor_data)
+            
+            statistics_from_data = []
+            # Call the statistics calculator to get the statistics from the data    
+            # process the data to get the relevant statistics. 
+            if request_body['statistic'] == "average":
+                # get the average of the metrics specified. 
+                statistics_from_data = statistics_calculator.calculate_average(list_of_sensor_data, request_body['metrics'],request_body['sensors'])
+            elif request_body['statistic'] == "max":
+                # get the max of the metrics specified. 
+                statistics_from_data = statistics_calculator.calculate_max(list_of_sensor_data, request_body['metrics'],request_body['sensors'])
+            elif request_body['statistic'] == "min":
+                # get the min of the metrics specified. 
+                statistics_from_data = statistics_calculator.calculate_min(list_of_sensor_data, request_body['metrics'],request_body['sensors'])
+            elif request_body['statistic'] == "sum":
+                # get the sum of the metrics specified. 
+                statistics_from_data = statistics_calculator.calculate_sum(list_of_sensor_data, request_body['metrics'],request_body['sensors'])
+                
+            # parse the response to fit the response schema.
+            statistics_from_data = parser.build_response_for_service(
+                request_body['statistic'],
+                request_body['sensors'],
+                request_body['date'],
+                request_body['metrics'],
+                str(statistics_from_data),
+                "success"
+            )
+            return statistics_from_data
+
     except Exception as e:
         # Handle any exceptions that may occur during processing
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error in get_sensor_statistics: {str(e)}")
         
-    return variable_to_return
+    return statistics_from_data
