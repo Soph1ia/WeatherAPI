@@ -2,7 +2,7 @@
 This application is using FastAPI to deploy an API endpoint that will allow users to query and get the latest statistics of different sensors. 
 
 ## Architecture Overview
-![WeatherAPI-Planning](https://github.com/user-attachments/assets/dc3c168c-37f1-4034-8355-fcd2a91bd53f)
+![WeatherAPI_Architecture_Overview](https://github.com/user-attachments/assets/25031a3e-2a64-4d82-80c7-83558c6a92ed)
 
 ## How To Run This Project
 
